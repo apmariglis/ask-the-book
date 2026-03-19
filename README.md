@@ -1,4 +1,4 @@
-# Book RAG
+# AskTheBook
 
 A clean, modular **Retrieval-Augmented Generation (RAG)** system for querying OCR'd books.
 Built with plain Python — no LangChain, no LlamaIndex — as a hands-on demonstration of
@@ -7,7 +7,7 @@ the core ideas behind RAG.
 ## Architecture
 
 ```
-book_rag/
+ask_the_book/
 ├── config.py               # Central config from environment variables
 ├── ingestion/
 │   ├── loader.py           # Reads & filters JSONL pages
@@ -28,8 +28,8 @@ book_rag/
 │   └── engine.py           # UI-agnostic engine: retrieve → generate
 └── cli/
     ├── main.py             # CLI entry point (Click)
-    ├── ingest.py           # `rag ingest` command
-    └── query.py            # `rag query` command
+    ├── ingest.py           # `askthebook ingest` command
+    └── query.py            # `askthebook query` command
 ```
 
 Each layer depends only on abstractions, making it straightforward to swap providers:
@@ -47,7 +47,7 @@ Each layer depends only on abstractions, making it straightforward to swap provi
 
 ```bash
 git clone <your-repo>
-cd book-rag
+cd ask-the-book
 poetry install
 ```
 
@@ -61,7 +61,7 @@ cp .env.example .env
 ### 3. Ingest your book
 
 ```bash
-rag ingest data/book.jsonl
+askthebook ingest data/book.jsonl
 ```
 
 This reads the JSONL file, skips pages marked `"skip": true`, embeds each page,
@@ -71,7 +71,7 @@ Run this once; it's safe to re-run (upserts).
 ### 4. Query
 
 ```bash
-rag query "What does chapter 3 say about topic X?"
+askthebook query "What does chapter 3 say about topic X?"
 ```
 
 Output:

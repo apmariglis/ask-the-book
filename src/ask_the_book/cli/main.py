@@ -2,8 +2,8 @@
 CLI entry point.
 
 Two subcommands:
-    rag ingest  — index a JSONL file into the vector store
-    rag query   — ask a single question (no memory)
+    askthebook ingest  — index a JSONL file into the vector store
+    askthebook query   — ask a single question (no memory)
 
 The wiring of concrete providers happens here so all other modules
 remain decoupled from each other.
@@ -12,13 +12,13 @@ remain decoupled from each other.
 from __future__ import annotations
 
 import click
-from book_rag.cli.ingest import ingest_command
-from book_rag.cli.query import query_command
+from ask_the_book.cli.ingest import ingest_command
+from ask_the_book.cli.query import query_command
 
 
 @click.group()
 def cli() -> None:
-    """Book RAG — query your OCR'd book with natural language."""
+    """AskTheBook — query your reference books with natural language."""
 
 
 cli.add_command(ingest_command, name="ingest")

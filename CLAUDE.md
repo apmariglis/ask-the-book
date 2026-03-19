@@ -29,8 +29,8 @@ poetry run mypy src/
 
 The CLI is exposed as a `rag` command after `poetry install`:
 ```bash
-rag ingest data/book.jsonl
-rag query "Your question here"
+askthebook ingest data/book.jsonl
+askthebook query "Your question here"
 ```
 
 ## Architecture

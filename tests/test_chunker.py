@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from book_rag.ingestion.chunker import WholePageChunker
-from book_rag.ingestion.loader import Page
-from book_rag.ingestion.loader import Table
+from ask_the_book.ingestion.chunker import WholePageChunker
+from ask_the_book.ingestion.loader import Page
+from ask_the_book.ingestion.loader import Table
 
 
 def _make_page(**kwargs) -> Page:

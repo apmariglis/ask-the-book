@@ -8,7 +8,7 @@ if you need higher accuracy.
 
 from __future__ import annotations
 
-from book_rag.embedding.base import EmbeddingProvider
+from ask_the_book.embedding.base import EmbeddingProvider
 from openai import OpenAI
 
 

@@ -8,9 +8,9 @@ connect them and expose a clean interface to the RAG engine.
 
 from __future__ import annotations
 
-from book_rag.embedding.base import EmbeddingProvider
-from book_rag.vectorstore.base import SearchResult
-from book_rag.vectorstore.base import VectorStore
+from ask_the_book.embedding.base import EmbeddingProvider
+from ask_the_book.vectorstore.base import SearchResult
+from ask_the_book.vectorstore.base import VectorStore
 
 
 class Retriever:

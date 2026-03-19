@@ -11,10 +11,10 @@ from __future__ import annotations
 import json
 
 import anthropic
-from book_rag.generation.base import Excerpt
-from book_rag.generation.base import GenerationResult
-from book_rag.generation.base import LLMProvider
-from book_rag.generation.base import Message
+from ask_the_book.generation.base import Excerpt
+from ask_the_book.generation.base import GenerationResult
+from ask_the_book.generation.base import LLMProvider
+from ask_the_book.generation.base import Message
 
 _SYSTEM_PROMPT = """\
 You are a helpful assistant that answers questions strictly based on the \

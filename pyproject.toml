@@ -1,7 +1,7 @@
 [project]
-name = "book_rag"
+name = "ask_the_book"
 version = "0.1.0"
-description = ""
+description = "A RAG system for querying niche reference books with natural language"
 authors = [
     {name = "apmariglis",email = "apmariglis@gmail.com"}
 ]
@@ -11,7 +11,10 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "book_rag", from = "src"}]
+packages = [{include = "ask_the_book", from = "src"}]
+
+[tool.poetry.scripts]
+askthebook = "ask_the_book.cli.main:cli"
 
 [tool.poetry.dependencies]
 openai = "^1.0"

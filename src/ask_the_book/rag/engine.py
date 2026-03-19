@@ -10,11 +10,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from book_rag.generation.base import Excerpt
-from book_rag.generation.base import LLMProvider
-from book_rag.generation.base import Message
-from book_rag.retrieval.retriever import Retriever
-from book_rag.vectorstore.base import SearchResult
+from ask_the_book.generation.base import Excerpt
+from ask_the_book.generation.base import LLMProvider
+from ask_the_book.generation.base import Message
+from ask_the_book.retrieval.retriever import Retriever
+from ask_the_book.vectorstore.base import SearchResult
 
 
 @dataclass

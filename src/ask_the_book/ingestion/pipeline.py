@@ -10,12 +10,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from book_rag.embedding.base import EmbeddingProvider
-from book_rag.ingestion.chunker import Chunk
-from book_rag.ingestion.chunker import Chunker
-from book_rag.ingestion.chunker import WholePageChunker
-from book_rag.ingestion.loader import load_pages
-from book_rag.vectorstore.base import VectorStore
+from ask_the_book.embedding.base import EmbeddingProvider
+from ask_the_book.ingestion.chunker import Chunk
+from ask_the_book.ingestion.chunker import Chunker
+from ask_the_book.ingestion.chunker import WholePageChunker
+from ask_the_book.ingestion.loader import load_pages
+from ask_the_book.vectorstore.base import VectorStore
 
 
 def ingest(

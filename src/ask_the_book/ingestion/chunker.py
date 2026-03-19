@@ -16,7 +16,7 @@ from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
 
-from book_rag.ingestion.loader import Page
+from ask_the_book.ingestion.loader import Page
 
 
 @dataclass

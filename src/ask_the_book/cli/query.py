@@ -1,5 +1,5 @@
 """
-``rag query`` command.
+``askthebook query`` command.
 
 Asks a single question against the indexed book. No conversation memory.
 Displays the answer followed by source citations.
@@ -8,13 +8,13 @@ Displays the answer followed by source citations.
 from __future__ import annotations
 
 import click
-from book_rag.config import config
-from book_rag.embedding.openai_embedder import OpenAIEmbedder
-from book_rag.generation.anthropic_llm import AnthropicLLM
-from book_rag.rag.engine import RAGEngine
-from book_rag.rag.engine import RAGResponse
-from book_rag.retrieval.retriever import Retriever
-from book_rag.vectorstore.chroma_store import ChromaStore
+from ask_the_book.config import config
+from ask_the_book.embedding.openai_embedder import OpenAIEmbedder
+from ask_the_book.generation.anthropic_llm import AnthropicLLM
+from ask_the_book.rag.engine import RAGEngine
+from ask_the_book.rag.engine import RAGResponse
+from ask_the_book.retrieval.retriever import Retriever
+from ask_the_book.vectorstore.chroma_store import ChromaStore
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -34,7 +34,7 @@ def query_command(question: str) -> None:
     Ask QUESTION against the indexed book and print the answer.
 
     QUESTION should be a natural-language question in quotes,
-    e.g.:  rag query "What does chapter 3 say about topic X?"
+    e.g.:  askthebook query "What does chapter 3 say about topic X?"
     """
     engine = _build_engine()
 

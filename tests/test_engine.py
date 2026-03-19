@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from book_rag.rag.engine import RAGEngine
-from book_rag.rag.engine import RAGResponse
-from book_rag.vectorstore.base import SearchResult
+from ask_the_book.rag.engine import RAGEngine
+from ask_the_book.rag.engine import RAGResponse
+from ask_the_book.vectorstore.base import SearchResult
 
 
 def _make_search_result(page: int = 1, score: float = 0.9) -> SearchResult:

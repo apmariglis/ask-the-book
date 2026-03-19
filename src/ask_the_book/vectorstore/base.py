@@ -11,7 +11,7 @@ from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
 
-from book_rag.ingestion.chunker import Chunk
+from ask_the_book.ingestion.chunker import Chunk
 
 
 @dataclass

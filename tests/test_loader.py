@@ -7,8 +7,8 @@ import textwrap
 from pathlib import Path
 
 import pytest
-from book_rag.ingestion.loader import Page
-from book_rag.ingestion.loader import load_pages
+from ask_the_book.ingestion.loader import Page
+from ask_the_book.ingestion.loader import load_pages
 
 
 def _write_jsonl(tmp_path: Path, records: list[dict]) -> Path:

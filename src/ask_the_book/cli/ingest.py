@@ -1,5 +1,5 @@
 """
-``rag ingest`` command.
+``askthebook ingest`` command.
 
 Reads a JSONL file, chunks its pages, embeds them, and stores the
 result in ChromaDB. Run this once before querying.
@@ -10,10 +10,10 @@ from __future__ import annotations
 from pathlib import Path
 
 import click
-from book_rag.config import config
-from book_rag.embedding.openai_embedder import OpenAIEmbedder
-from book_rag.ingestion.pipeline import ingest
-from book_rag.vectorstore.chroma_store import ChromaStore
+from ask_the_book.config import config
+from ask_the_book.embedding.openai_embedder import OpenAIEmbedder
+from ask_the_book.ingestion.pipeline import ingest
+from ask_the_book.vectorstore.chroma_store import ChromaStore
 from rich.console import Console
 from rich.progress import Progress
 from rich.progress import SpinnerColumn
