@@ -1,0 +1,51 @@
+[project]
+name = "book_rag"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "apmariglis",email = "apmariglis@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "book_rag", from = "src"}]
+
+[tool.poetry.dependencies]
+openai = "^1.0"
+chromadb = "^0.5"
+anthropic = "^0.40"
+python-dotenv = "^1.0"
+click = "^8.1"
+rich = "^13.0"
+onnxruntime = ">=1.19.0,<1.24.0"
+
+ 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pytest-mock = "^3.14"
+ruff = "^0.4"
+mypy = "^1.10"
+pdbpp = "^0.12.1"
+ 
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+ 
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ 
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+ 
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
