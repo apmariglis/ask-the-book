@@ -64,13 +64,18 @@ class ChromaStore(VectorStore):
             # Convert to a similarity score in [0, 1].
             score = 1.0 - (distance / 2.0)
 
+            # "" was stored in place of None (ChromaDB doesn't support None
+            # in metadata); convert back to None on the way out.
+            book_page = meta["book_page"] or None
+            title = meta["title"] or None
+
             search_results.append(
                 SearchResult(
                     chunk_id=meta["chunk_id"],
                     text=doc,
                     page=meta["page"],
-                    book_page=meta.get("book_page"),
-                    title=meta.get("title"),
+                    book_page=book_page,
+                    title=title,
                     score=score,
                 )
             )
