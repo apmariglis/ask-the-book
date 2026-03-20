@@ -36,7 +36,10 @@ class RAGResponse:
     independently how and whether to display citations.
     """
 
-    answer: str
+    found_in_context: bool
+    summary: str
+    detail: str
+    caveats: str
     sources: list[Source]
     excerpts: list[Excerpt]
 
@@ -102,7 +105,10 @@ class RAGEngine:
         annotated_excerpts = _annotate_excerpts(result.excerpts, results)
 
         return RAGResponse(
-            answer=result.answer,
+            found_in_context=result.found_in_context,
+            summary=result.summary,
+            detail=result.detail,
+            caveats=result.caveats,
             sources=sources,
             excerpts=annotated_excerpts,
         )
@@ -123,5 +129,5 @@ def _annotate_excerpts(
             if excerpt.text.strip() in result.text:
                 book_page = result.book_page
                 break
-        annotated.append(Excerpt(text=excerpt.text, book_page=book_page))
+        annotated.append(Excerpt(text=excerpt.text, supports=excerpt.supports, book_page=book_page))
     return annotated

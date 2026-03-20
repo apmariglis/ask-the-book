@@ -2,7 +2,7 @@
 ``askthebook query`` command.
 
 Asks a single question against the indexed book. No conversation memory.
-Displays the answer followed by source citations.
+Displays a structured answer followed by source citations.
 """
 
 from __future__ import annotations
@@ -46,8 +46,6 @@ def query_command(question: str) -> None:
     _render_response(question, response)
 
 
-
-
 def _render_response(question: str, response: RAGResponse) -> None:
     console.print()
     console.print(
@@ -55,30 +53,62 @@ def _render_response(question: str, response: RAGResponse) -> None:
     )
     console.print()
 
-    console.print(Markdown(response.answer))
+    if not response.found_in_context:
+        console.print(
+            Panel(
+                Text(response.summary, style="yellow"),
+                title="[yellow]Not found in book[/yellow]",
+                border_style="yellow",
+            )
+        )
+        console.print()
+        return
+
+    # Summary — quick one-liner
+    console.print(Panel(Text(response.summary, style="bold"), title="Summary", expand=False))
     console.print()
 
+    # Detail — full answer as Markdown
+    if response.detail:
+        console.print(Rule("Detail", style="dim"))
+        console.print(Markdown(response.detail))
+        console.print()
+
+    # Caveats
+    if response.caveats:
+        console.print(
+            Panel(
+                Text(response.caveats, style="dim italic"),
+                title="[dim]Caveats[/dim]",
+                border_style="dim",
+            )
+        )
+        console.print()
+
+    # Excerpts with attribution
     if response.excerpts:
         console.print(Rule("Passages used", style="dim"))
         for i, excerpt in enumerate(response.excerpts, start=1):
-            page_label = (
-                f"  [dim]Book p. {excerpt.book_page}[/dim]" if excerpt.book_page else ""
-            )
+            page_label = f"  [dim]p. {excerpt.book_page}[/dim]" if excerpt.book_page else ""
+            supports_label = f"\n[dim]↳ {excerpt.supports}[/dim]" if excerpt.supports else ""
             console.print(
                 Panel(
-                    Text(excerpt.text, style="italic"),
+                    Text(excerpt.text, style="italic") if not excerpt.supports
+                    else Text.assemble(
+                        (excerpt.text, "italic"),
+                        (f"\n↳ {excerpt.supports}", "dim"),
+                    ),
                     title=f"[dim]Excerpt {i}[/dim]{page_label}",
                     border_style="dim",
                 )
             )
         console.print()
 
+    # Sources
     console.print(Rule("Sources", style="dim"))
     for i, source in enumerate(response.sources, start=1):
         page_label = (
-            f"book p. {source.book_page}"
-            if source.book_page
-            else f"scan p. {source.page}"
+            f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
         )
         title_label = f" — {source.title}" if source.title else ""
         score_label = f"  [dim](score: {source.score:.2f})[/dim]"

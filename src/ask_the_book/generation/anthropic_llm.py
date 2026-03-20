@@ -22,19 +22,25 @@ provided excerpts from a book.
 
 Rules:
 - Base your answer ONLY on the context passages below.
-- If the answer cannot be found in the context, say so in the "answer" field \
+- If the answer cannot be found in the context, set "found_in_context" to false, \
+write a short explanation in "summary", leave "detail" and "caveats" empty, \
 and leave "excerpts" as an empty list.
 - Do not speculate or bring in outside knowledge.
 - In "excerpts", copy verbatim only the specific sentences or passages from \
-the context that your answer is directly based on. Do not include passages \
-that are merely related but not actually used.
+the context that your answer is directly based on. For each excerpt, add a \
+"supports" field explaining which part of your answer it backs up.
 
 Respond with ONLY a valid JSON object in this exact format:
 {
-  "answer": "your answer here",
+  "found_in_context": true,
+  "summary": "one-sentence answer",
+  "detail": "full explanation",
+  "caveats": "any limitations or gaps in the context, or empty string if none",
   "excerpts": [
-    "verbatim passage 1 you based your answer on",
-    "verbatim passage 2 you based your answer on"
+    {
+      "text": "verbatim passage from the context",
+      "supports": "which part of the answer this passage backs up"
+    }
   ]
 }
 """
@@ -57,7 +63,7 @@ class AnthropicLLM(LLMProvider):
     def __init__(
         self,
         api_key: str,
-        model: str = "claude-3-5-sonnet-20241022",
+        model: str = "claude-sonnet-4-5",
         max_tokens: int = 1024,
     ) -> None:
         self._client = anthropic.Anthropic(api_key=api_key)
@@ -91,12 +97,28 @@ class AnthropicLLM(LLMProvider):
         try:
             data = json.loads(raw)
             return GenerationResult(
-                answer=data.get("answer", ""),
-                excerpts=[Excerpt(text=t) for t in data.get("excerpts", [])],
+                found_in_context=bool(data.get("found_in_context", True)),
+                summary=data.get("summary", ""),
+                detail=data.get("detail", ""),
+                caveats=data.get("caveats", ""),
+                excerpts=[
+                    Excerpt(
+                        text=e["text"],
+                        supports=e.get("supports", ""),
+                    )
+                    for e in data.get("excerpts", [])
+                    if isinstance(e, dict)
+                ],
             )
         except json.JSONDecodeError:
-            # Graceful fallback: treat the whole response as the answer
-            return GenerationResult(answer=raw, excerpts=[])
+            # Graceful fallback: treat the whole response as the summary
+            return GenerationResult(
+                found_in_context=False,
+                summary=raw,
+                detail="",
+                caveats="",
+                excerpts=[],
+            )
 
 
 def _format_context(chunks: list[str]) -> str:

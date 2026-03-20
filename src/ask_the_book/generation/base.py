@@ -23,12 +23,16 @@ class Message(TypedDict):
 @dataclass
 class Excerpt:
     text: str
+    supports: str = ""          # which part of the answer this passage backs up
     book_page: int | None = None  # filled in by the engine, not the LLM
 
 
 @dataclass
 class GenerationResult:
-    answer: str
+    found_in_context: bool  # whether the answer could be grounded in retrieved chunks
+    summary: str            # one-sentence answer
+    detail: str             # full explanation
+    caveats: str            # limitations or gaps; empty string if none
     excerpts: list[Excerpt]
 
 

@@ -15,13 +15,13 @@ def test_engine_returns_rag_response() -> None:
     retriever.retrieve.return_value = [make_search_result()]
 
     llm = MagicMock()
-    llm.generate.return_value = GenerationResult(answer="The answer.", excerpts=[])
+    llm.generate.return_value = GenerationResult(found_in_context=True, summary="The answer.", detail="", caveats="", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     response = engine.query("What is the answer?")
 
     assert isinstance(response, RAGResponse)
-    assert response.answer == "The answer."  # unwrapped from GenerationResult by engine
+    assert response.summary == "The answer."
     assert len(response.sources) == 1
 
 
@@ -32,7 +32,7 @@ def test_engine_passes_context_chunks_to_llm() -> None:
     retriever.retrieve.return_value = results
 
     llm = MagicMock()
-    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
+    llm.generate.return_value = GenerationResult(found_in_context=True, summary="Answer.", detail="", caveats="", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     engine.query("Question?")
@@ -46,7 +46,7 @@ def test_engine_passes_history_to_llm() -> None:
     retriever.retrieve.return_value = []
 
     llm = MagicMock()
-    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
+    llm.generate.return_value = GenerationResult(found_in_context=True, summary="Answer.", detail="", caveats="", excerpts=[])
 
     history = [{"role": "user", "content": "Prior question"}]
     engine = RAGEngine(retriever=retriever, llm=llm)
@@ -63,7 +63,7 @@ def test_engine_sources_match_results() -> None:
     retriever.retrieve.return_value = results
 
     llm = MagicMock()
-    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
+    llm.generate.return_value = GenerationResult(found_in_context=True, summary="Answer.", detail="", caveats="", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     response = engine.query("Q?")
