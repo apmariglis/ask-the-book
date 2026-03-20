@@ -99,10 +99,10 @@ All settings can be overridden with environment variables (or in `.env`):
 |---|---|---|
 | `OPENAI_API_KEY` | — | **Required** — used for embeddings |
 | `ANTHROPIC_API_KEY` | — | **Required** — used for answer generation |
-| `CHROMA_PATH` | `.chroma` | Where ChromaDB stores its data |
-| `EMBEDDING_MODEL` | `text-embedding-3-small` | OpenAI embedding model |
-| `GENERATION_MODEL` | `claude-sonnet-4-5` | Anthropic model |
-| `RETRIEVAL_TOP_K` | `5` | Number of chunks retrieved per query |
+| `CHROMA_PATH` | — | **Required** — directory where ChromaDB stores its data |
+| `EMBEDDING_MODEL` | — | **Required** — OpenAI embedding model |
+| `GENERATION_MODEL` | — | **Required** — Anthropic model |
+| `RETRIEVAL_TOP_K` | — | **Required** — number of chunks retrieved per query |
 
 ## Input data format
 

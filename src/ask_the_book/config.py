@@ -24,19 +24,19 @@ class Config:
     )
 
     # --- Vector store ---
-    chroma_path: str = field(default_factory=lambda: os.getenv("CHROMA_PATH"))
+    chroma_path: str = field(default_factory=lambda: _require("CHROMA_PATH"))
     chroma_collection: str = "book"
 
     # --- Embedding ---
-    embedding_model: str = field(default_factory=lambda: os.getenv("EMBEDDING_MODEL"))
+    embedding_model: str = field(default_factory=lambda: _require("EMBEDDING_MODEL"))
 
     # --- Generation ---
-    generation_model: str = field(default_factory=lambda: os.getenv("GENERATION_MODEL"))
+    generation_model: str = field(default_factory=lambda: _require("GENERATION_MODEL"))
     max_tokens: int = 1024
 
     # --- Retrieval ---
     retrieval_top_k: int = field(
-        default_factory=lambda: int(os.getenv("RETRIEVAL_TOP_K"))
+        default_factory=lambda: int(_require("RETRIEVAL_TOP_K"))
     )
 
 
