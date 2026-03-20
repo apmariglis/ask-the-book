@@ -13,6 +13,7 @@ from ask_the_book.generation.base import Excerpt
 from ask_the_book.rag.engine import RAGResponse
 from ask_the_book.rag.engine import Source
 from rich.console import Console
+from rich.console import Group
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.progress import Progress
@@ -65,23 +66,16 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print()
         return
 
-    console.print(Panel(Text(response.summary, style="bold"), title="Summary", expand=False))
-    console.print()
-
+    answer_parts: list = [Text(response.summary, style="bold")]
     if response.detail:
-        console.print(Rule("Detail", style="dim"))
-        console.print(Markdown(response.detail))
-        console.print()
-
+        answer_parts.append(Rule(style="dim"))
+        answer_parts.append(Markdown(response.detail))
     if response.caveats:
-        console.print(
-            Panel(
-                Text(response.caveats, style="dim italic"),
-                title="[dim]Caveats[/dim]",
-                border_style="dim",
-            )
-        )
-        console.print()
+        answer_parts.append(Rule("Caveats", style="dim"))
+        answer_parts.append(Text(response.caveats, style="dim italic"))
+
+    console.print(Panel(Group(*answer_parts), title="Answer"))
+    console.print()
 
     excerpts_by_page: dict[int | None, list[Excerpt]] = {}
     for excerpt in response.excerpts:
@@ -133,9 +127,7 @@ def _render_response(question: str, response: RAGResponse) -> None:
 
 
 def _page_label(page: int, book_page: int | None) -> str:
-    if book_page:
-        return f"scan p. {page} (book p. {book_page})"
-    return f"scan p. {page}"
+    return f"scan p. {page} · book p. {book_page if book_page else 'n/a'}"
 
 
 def _render_stats(response: RAGResponse) -> None:
