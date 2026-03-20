@@ -103,6 +103,7 @@ All settings can be overridden with environment variables (or in `.env`):
 | `EMBEDDING_MODEL` | — | **Required** — OpenAI embedding model |
 | `GENERATION_MODEL` | — | **Required** — Anthropic model |
 | `RETRIEVAL_TOP_K` | — | **Required** — number of chunks retrieved per query |
+| `MAX_TOKENS` | — | **Required** — max tokens for the generated answer (4096 recommended) |
 
 ## Input data format
 

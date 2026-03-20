@@ -32,7 +32,9 @@ class Config:
 
     # --- Generation ---
     generation_model: str = field(default_factory=lambda: _require("GENERATION_MODEL"))
-    max_tokens: int = 1024
+    max_tokens: int = field(
+        default_factory=lambda: int(_require("MAX_TOKENS"))
+    )
 
     # --- Retrieval ---
     retrieval_top_k: int = field(
