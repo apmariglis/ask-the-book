@@ -133,9 +133,18 @@ def _annotate_excerpts(
     annotated = []
     for excerpt in excerpts:
         book_page = None
+        source_page = None
         for result in results:
             if excerpt.text.strip() in result.text:
                 book_page = result.book_page
+                source_page = result.page
                 break
-        annotated.append(Excerpt(text=excerpt.text, supports=excerpt.supports, book_page=book_page))
+        annotated.append(
+            Excerpt(
+                text=excerpt.text,
+                supports=excerpt.supports,
+                book_page=book_page,
+                source_page=source_page,
+            )
+        )
     return annotated

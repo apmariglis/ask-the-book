@@ -83,15 +83,14 @@ def _render_response(question: str, response: RAGResponse) -> None:
         )
         console.print()
 
-    # Group excerpts by page
     excerpts_by_page: dict[int | None, list[Excerpt]] = {}
     for excerpt in response.excerpts:
-        excerpts_by_page.setdefault(excerpt.book_page, []).append(excerpt)
+        excerpts_by_page.setdefault(excerpt.source_page, []).append(excerpt)
 
     used: list[Source] = []
     retrieved: list[Source] = []
     for source in response.sources:
-        if excerpts_by_page.get(source.book_page):
+        if excerpts_by_page.get(source.page):
             used.append(source)
         else:
             retrieved.append(source)
@@ -100,14 +99,12 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print(Rule("Used in answer", style="dim"))
         console.print()
         for i, source in enumerate(used, start=1):
-            page_label = (
-                f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
-            )
+            page_label = _page_label(source.page, source.book_page)
             title_label = f" — {source.title}" if source.title else ""
             score_label = f"  (score: {source.score:.2f})"
 
             excerpt_lines = Text()
-            for j, excerpt in enumerate(excerpts_by_page.get(source.book_page, [])):
+            for j, excerpt in enumerate(excerpts_by_page.get(source.page, [])):
                 if j > 0:
                     excerpt_lines.append("\n\n")
                 excerpt_lines.append(excerpt.text, style="italic")
@@ -126,15 +123,19 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print()
         console.print(Rule("Also retrieved", style="dim"))
         for source in retrieved:
-            page_label = (
-                f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
-            )
+            page_label = _page_label(source.page, source.book_page)
             title_label = f" — {source.title}" if source.title else ""
             score_label = f"  [dim](score: {source.score:.2f})[/dim]"
             console.print(f"  {page_label}{title_label}{score_label}")
 
     console.print()
     _render_stats(response)
+
+
+def _page_label(page: int, book_page: int | None) -> str:
+    if book_page:
+        return f"scan p. {page} (book p. {book_page})"
+    return f"scan p. {page}"
 
 
 def _render_stats(response: RAGResponse) -> None:
