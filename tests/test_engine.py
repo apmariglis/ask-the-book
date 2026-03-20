@@ -7,23 +7,12 @@ from unittest.mock import MagicMock
 from ask_the_book.generation.base import GenerationResult
 from ask_the_book.rag.engine import RAGEngine
 from ask_the_book.rag.engine import RAGResponse
-from ask_the_book.vectorstore.base import SearchResult
-
-
-def _make_search_result(page: int = 1, score: float = 0.9) -> SearchResult:
-    return SearchResult(
-        chunk_id=f"page-{page}",
-        text=f"Text from page {page}.",
-        page=page,
-        book_page=page,
-        title=f"Chapter {page}",
-        score=score,
-    )
+from fixtures import make_search_result
 
 
 def test_engine_returns_rag_response() -> None:
     retriever = MagicMock()
-    retriever.retrieve.return_value = [_make_search_result()]
+    retriever.retrieve.return_value = [make_search_result()]
 
     llm = MagicMock()
     llm.generate.return_value = GenerationResult(answer="The answer.", excerpts=[])
@@ -37,7 +26,7 @@ def test_engine_returns_rag_response() -> None:
 
 
 def test_engine_passes_context_chunks_to_llm() -> None:
-    results = [_make_search_result(page=i) for i in range(1, 4)]
+    results = [make_search_result(page=i) for i in range(1, 4)]
 
     retriever = MagicMock()
     retriever.retrieve.return_value = results
@@ -68,7 +57,7 @@ def test_engine_passes_history_to_llm() -> None:
 
 
 def test_engine_sources_match_results() -> None:
-    results = [_make_search_result(page=3, score=0.75)]
+    results = [make_search_result(page=3, score=0.75)]
 
     retriever = MagicMock()
     retriever.retrieve.return_value = results
