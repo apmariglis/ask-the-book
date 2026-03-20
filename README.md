@@ -60,7 +60,7 @@ cp .env.example .env
 
 ### 3. Ingest your book
 
-> **Don't have a JSONL file yet?** Use [docpeel](https://github.com/apmariglis/docpeel) to extract one from a PDF book.
+> **Don't have a JSONL file yet?** Any source that emits the schema described below works. [docpeel](https://github.com/apmariglis/docpeel) is one such tool — it extracts structured JSONL from PDF books.
 
 ```bash
 askthebook ingest data/book.jsonl
