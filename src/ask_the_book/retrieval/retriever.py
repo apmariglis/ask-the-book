@@ -39,5 +39,7 @@ class Retriever:
 
     def retrieve(self, query: str) -> list[SearchResult]:
         """Embed *query* and return the closest chunks from the store."""
-        [query_vector] = self._embedder.embed([query])
-        return self._store.query(query_vector, top_k=self._top_k)
+        vectors = self._embedder.embed([query])
+        if len(vectors) != 1:
+            raise ValueError(f"Expected 1 embedding vector, got {len(vectors)}")
+        return self._store.query(vectors[0], top_k=self._top_k)
