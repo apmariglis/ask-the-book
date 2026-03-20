@@ -9,6 +9,7 @@ keeps hallucinations in check for a book-scoped RAG system.
 from __future__ import annotations
 
 import json
+import re
 import time
 
 import anthropic
@@ -45,6 +46,14 @@ Respond with ONLY a valid JSON object in this exact format:
   ]
 }
 """
+
+_BULLET_RE = re.compile(r"^[ \t]*[•▪▸◦●‣⁃∙◆◇→]\s*", re.MULTILINE)
+
+
+def _normalize_markdown(text: str) -> str:
+    """Replace non-standard bullet characters at line starts with Markdown `- `."""
+    return _BULLET_RE.sub("- ", text)
+
 
 def _estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float | None:
     """Return estimated cost in USD using LiteLLM's pricing database, or None on failure."""
@@ -117,7 +126,7 @@ class AnthropicLLM(LLMProvider):
             return GenerationResult(
                 found_in_context=bool(data.get("found_in_context", True)),
                 summary=data.get("summary", ""),
-                detail=data.get("detail", ""),
+                detail=_normalize_markdown(data.get("detail", "")),
                 caveats=data.get("caveats", ""),
                 excerpts=[
                     Excerpt(
