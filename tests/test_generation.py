@@ -13,6 +13,10 @@ def test_generation_result_has_summary() -> None:
         detail="A longer explanation.",
         caveats="",
         excerpts=[],
+        elapsed_seconds=1.0,
+        input_tokens=100,
+        output_tokens=50,
+        cost_usd=0.001,
     )
     assert result.summary == "A brief answer."
 

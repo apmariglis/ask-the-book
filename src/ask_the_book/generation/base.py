@@ -34,6 +34,10 @@ class GenerationResult:
     detail: str             # full explanation
     caveats: str            # limitations or gaps; empty string if none
     excerpts: list[Excerpt]
+    elapsed_seconds: float
+    input_tokens: int
+    output_tokens: int
+    cost_usd: float | None  # None if the model is not in the pricing table
 
 
 class LLMProvider(ABC):

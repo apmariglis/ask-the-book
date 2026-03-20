@@ -42,6 +42,10 @@ class RAGResponse:
     caveats: str
     sources: list[Source]
     excerpts: list[Excerpt]
+    elapsed_seconds: float
+    input_tokens: int
+    output_tokens: int
+    cost_usd: float | None  # None if the model is not in the pricing table
 
 
 class RAGEngine:
@@ -111,6 +115,10 @@ class RAGEngine:
             caveats=result.caveats,
             sources=sources,
             excerpts=annotated_excerpts,
+            elapsed_seconds=result.elapsed_seconds,
+            input_tokens=result.input_tokens,
+            output_tokens=result.output_tokens,
+            cost_usd=result.cost_usd,
         )
 
 

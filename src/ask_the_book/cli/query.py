@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import click
 from ask_the_book.cli.wiring import build_engine
-from ask_the_book.rag.engine import RAGEngine
+from ask_the_book.generation.base import Excerpt
 from ask_the_book.rag.engine import RAGResponse
+from ask_the_book.rag.engine import Source
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -64,17 +65,14 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print()
         return
 
-    # Summary — quick one-liner
     console.print(Panel(Text(response.summary, style="bold"), title="Summary", expand=False))
     console.print()
 
-    # Detail — full answer as Markdown
     if response.detail:
         console.print(Rule("Detail", style="dim"))
         console.print(Markdown(response.detail))
         console.print()
 
-    # Caveats
     if response.caveats:
         console.print(
             Panel(
@@ -85,32 +83,65 @@ def _render_response(question: str, response: RAGResponse) -> None:
         )
         console.print()
 
-    # Excerpts with attribution
-    if response.excerpts:
-        console.print(Rule("Passages used", style="dim"))
-        for i, excerpt in enumerate(response.excerpts, start=1):
-            page_label = f"  [dim]p. {excerpt.book_page}[/dim]" if excerpt.book_page else ""
-            supports_label = f"\n[dim]↳ {excerpt.supports}[/dim]" if excerpt.supports else ""
+    # Group excerpts by page
+    excerpts_by_page: dict[int | None, list[Excerpt]] = {}
+    for excerpt in response.excerpts:
+        excerpts_by_page.setdefault(excerpt.book_page, []).append(excerpt)
+
+    used: list[Source] = []
+    retrieved: list[Source] = []
+    for source in response.sources:
+        if excerpts_by_page.get(source.book_page):
+            used.append(source)
+        else:
+            retrieved.append(source)
+
+    if used:
+        console.print(Rule("Used in answer", style="dim"))
+        console.print()
+        for i, source in enumerate(used, start=1):
+            page_label = (
+                f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
+            )
+            title_label = f" — {source.title}" if source.title else ""
+            score_label = f"  (score: {source.score:.2f})"
+
+            excerpt_lines = Text()
+            for j, excerpt in enumerate(excerpts_by_page.get(source.book_page, [])):
+                if j > 0:
+                    excerpt_lines.append("\n\n")
+                excerpt_lines.append(excerpt.text, style="italic")
+                if excerpt.supports:
+                    excerpt_lines.append(f"\n↳ {excerpt.supports}", style="dim")
+
             console.print(
                 Panel(
-                    Text(excerpt.text, style="italic") if not excerpt.supports
-                    else Text.assemble(
-                        (excerpt.text, "italic"),
-                        (f"\n↳ {excerpt.supports}", "dim"),
-                    ),
-                    title=f"[dim]Excerpt {i}[/dim]{page_label}",
-                    border_style="dim",
+                    excerpt_lines,
+                    title=f"[bold]{i}.[/bold] {page_label}{title_label}[dim]{score_label}[/dim]",
+                    border_style="blue",
                 )
             )
-        console.print()
 
-    # Sources
-    console.print(Rule("Sources", style="dim"))
-    for i, source in enumerate(response.sources, start=1):
-        page_label = (
-            f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
-        )
-        title_label = f" — {source.title}" if source.title else ""
-        score_label = f"  [dim](score: {source.score:.2f})[/dim]"
-        console.print(f"  [bold]{i}.[/bold] {page_label}{title_label}{score_label}")
+    if retrieved:
+        console.print()
+        console.print(Rule("Also retrieved", style="dim"))
+        for source in retrieved:
+            page_label = (
+                f"p. {source.book_page}" if source.book_page else f"scan p. {source.page}"
+            )
+            title_label = f" — {source.title}" if source.title else ""
+            score_label = f"  [dim](score: {source.score:.2f})[/dim]"
+            console.print(f"  {page_label}{title_label}{score_label}")
+
+    console.print()
+    _render_stats(response)
+
+
+def _render_stats(response: RAGResponse) -> None:
+    cost = f"${response.cost_usd:.4f}" if response.cost_usd is not None else "n/a"
+    console.print(
+        f"[dim]  {response.elapsed_seconds:.1f}s · "
+        f"{response.input_tokens} in / {response.output_tokens} out · "
+        f"cost {cost}[/dim]"
+    )
     console.print()

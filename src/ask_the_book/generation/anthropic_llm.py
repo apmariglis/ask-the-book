@@ -9,6 +9,7 @@ keeps hallucinations in check for a book-scoped RAG system.
 from __future__ import annotations
 
 import json
+import time
 
 import anthropic
 from ask_the_book.generation.base import Excerpt
@@ -44,6 +45,23 @@ Respond with ONLY a valid JSON object in this exact format:
   ]
 }
 """
+
+# Pricing per million tokens (input, output) for known models.
+# https://www.anthropic.com/pricing
+_PRICING: dict[str, tuple[float, float]] = {
+    "claude-sonnet-4-5": (3.0, 15.0),
+    "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-opus-4-6": (15.0, 75.0),
+    "claude-haiku-4-5": (0.8, 4.0),
+}
+
+
+def _estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float | None:
+    """Return estimated cost in USD, or None if the model is not in the pricing table."""
+    if model not in _PRICING:
+        return None
+    input_price, output_price = _PRICING[model]
+    return (input_tokens * input_price + output_tokens * output_price) / 1_000_000
 
 
 class AnthropicLLM(LLMProvider):
@@ -85,13 +103,17 @@ class AnthropicLLM(LLMProvider):
         messages.append({"role": "user", "content": user_message})
         messages.append({"role": "assistant", "content": "{"})
 
+        t0 = time.monotonic()
         response = self._client.messages.create(
             model=self._model,
             max_tokens=self._max_tokens,
             system=_SYSTEM_PROMPT,
             messages=messages,
         )
+        elapsed = time.monotonic() - t0
 
+        input_tokens = response.usage.input_tokens
+        output_tokens = response.usage.output_tokens
         raw = "{" + response.content[0].text  # re-attach the prefill
 
         try:
@@ -109,6 +131,10 @@ class AnthropicLLM(LLMProvider):
                     for e in data.get("excerpts", [])
                     if isinstance(e, dict)
                 ],
+                elapsed_seconds=elapsed,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                cost_usd=_estimate_cost(self._model, input_tokens, output_tokens),
             )
         except json.JSONDecodeError:
             # Graceful fallback: treat the whole response as the summary
@@ -118,6 +144,10 @@ class AnthropicLLM(LLMProvider):
                 detail="",
                 caveats="",
                 excerpts=[],
+                elapsed_seconds=elapsed,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                cost_usd=_estimate_cost(self._model, input_tokens, output_tokens),
             )
 
 
