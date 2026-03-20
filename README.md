@@ -46,7 +46,7 @@ Each layer depends only on abstractions, making it straightforward to swap provi
 ### 1. Install
 
 ```bash
-git clone <your-repo>
+git clone https://github.com/apmariglis/ask-the-book
 cd ask-the-book
 poetry install
 ```
