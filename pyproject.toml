@@ -24,6 +24,7 @@ python-dotenv = "^1.0"
 click = "^8.1"
 rich = "^13.0"
 onnxruntime = ">=1.19.0,<1.24.0"
+litellm = "^1.0"
 
  
 [tool.poetry.group.dev.dependencies]

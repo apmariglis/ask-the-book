@@ -46,22 +46,18 @@ Respond with ONLY a valid JSON object in this exact format:
 }
 """
 
-# Pricing per million tokens (input, output) for known models.
-# https://www.anthropic.com/pricing
-_PRICING: dict[str, tuple[float, float]] = {
-    "claude-sonnet-4-5": (3.0, 15.0),
-    "claude-sonnet-4-6": (3.0, 15.0),
-    "claude-opus-4-6": (15.0, 75.0),
-    "claude-haiku-4-5": (0.8, 4.0),
-}
-
-
 def _estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float | None:
-    """Return estimated cost in USD, or None if the model is not in the pricing table."""
-    if model not in _PRICING:
+    """Return estimated cost in USD using LiteLLM's pricing database, or None on failure."""
+    try:
+        import litellm
+        prompt_cost, completion_cost = litellm.cost_per_token(
+            model=model,
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+        )
+        return prompt_cost + completion_cost
+    except Exception:
         return None
-    input_price, output_price = _PRICING[model]
-    return (input_tokens * input_price + output_tokens * output_price) / 1_000_000
 
 
 class AnthropicLLM(LLMProvider):
