@@ -55,7 +55,7 @@ poetry install
 
 ```bash
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY and ANTHROPIC_API_KEY
+# Edit .env and fill in all required values
 ```
 
 ### 3. Ingest your book
@@ -79,16 +79,31 @@ askthebook query "What does chapter 3 say about topic X?"
 Output:
 
 ```
-╭─ Question ───────────────────────────────────────────────────────╮
-│ What does chapter 3 say about topic X?                           │
-╰──────────────────────────────────────────────────────────────────╯
+╭─ Question ──────────────────────────────────────────╮
+│ What does chapter 3 say about topic X?              │
+╰─────────────────────────────────────────────────────╯
 
-According to chapter 3, topic X covers...
+╭─ Summary ───────────────────────────────────────────╮
+│ Topic X is covered in chapter 3 as follows...       │
+╰─────────────────────────────────────────────────────╯
 
-──────────────────────── Sources ──────────────────────────────────
-  1. book p. 42 — Chapter 3: Topic X  (score: 0.92)
-  2. book p. 41 — Chapter 3: Introduction  (score: 0.71)
-  ...
+────────────────────── Detail ────────────────────────
+A full explanation of topic X, drawn from the relevant
+passages...
+
+╭─ Caveats ───────────────────────────────────────────╮
+│ Only one passage in the book covers this directly.  │
+╰─────────────────────────────────────────────────────╯
+
+────────────────── Passages used ─────────────────────
+╭─ Excerpt 1  p. 42 ──────────────────────────────────╮
+│ Verbatim passage from the book...                   │
+│ ↳ Backs up the summary claim                        │
+╰─────────────────────────────────────────────────────╯
+
+─────────────────────── Sources ──────────────────────
+  1. p. 42 — Chapter 3: Topic X  (score: 0.92)
+  2. p. 41 — Chapter 3: Introduction  (score: 0.71)
 ```
 
 ## Configuration
