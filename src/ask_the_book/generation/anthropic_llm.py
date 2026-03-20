@@ -35,7 +35,7 @@ Respond with ONLY a valid JSON object in this exact format:
 {
   "found_in_context": true,
   "summary": "one-sentence answer",
-  "detail": "full explanation",
+  "detail": "full explanation in Markdown — use - for bullet points, numbered lists, or ## headers where they help clarity; never use • characters",
   "caveats": "any limitations or gaps in the context, or empty string if none",
   "excerpts": [
     {
