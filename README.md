@@ -39,7 +39,7 @@ Each layer depends only on abstractions, making it straightforward to swap provi
 | Embeddings | OpenAI `text-embedding-3-small` | Cohere, sentence-transformers, … |
 | Vector store | ChromaDB (local) | Pinecone, Weaviate, pgvector, … |
 | Generation | Anthropic Claude | OpenAI GPT, Mistral, local LLM, … |
-| Chunking | One chunk per page | Paragraph-level, sliding window, … |
+| Chunking | One chunk per page text + one per table | Paragraph-level, sliding window, … |
 
 ## Quickstart
 
@@ -66,8 +66,9 @@ cp .env.example .env
 askthebook ingest data/book.jsonl
 ```
 
-This reads the JSONL file, skips pages marked `"skip": true`, embeds each page,
-and stores the vectors in a local ChromaDB database (`.chroma/` by default).
+This reads the JSONL file, skips pages marked `"skip": true`, and creates one
+chunk per page (for prose) and one chunk per table — each embedded and stored
+separately in a local ChromaDB database (`.chroma/` by default).
 Run this once; it's safe to re-run (upserts).
 
 ### 4. Query
@@ -83,27 +84,26 @@ Output:
 │ What does chapter 3 say about topic X?              │
 ╰─────────────────────────────────────────────────────╯
 
-╭─ Summary ───────────────────────────────────────────╮
+╭─ Answer ────────────────────────────────────────────╮
 │ Topic X is covered in chapter 3 as follows...       │
+│ ──────────────────────────────────────────────────  │
+│ ## Key points                                       │
+│ - First point from the book                         │
+│ - Second point from the book                        │
+│ ────────────────────── Caveats ──────────────────── │
+│ Only one passage covers this directly.              │
 ╰─────────────────────────────────────────────────────╯
 
-────────────────────── Detail ────────────────────────
-A full explanation of topic X, drawn from the relevant
-passages...
-
-╭─ Caveats ───────────────────────────────────────────╮
-│ Only one passage in the book covers this directly.  │
-╰─────────────────────────────────────────────────────╯
-
-────────────────── Passages used ─────────────────────
-╭─ Excerpt 1  p. 42 ──────────────────────────────────╮
+────────────────── Used in answer ────────────────────
+╭─ 1. scan p. 42 · book p. 41 — Chapter 3: Topic X ──╮
 │ Verbatim passage from the book...                   │
 │ ↳ Backs up the summary claim                        │
 ╰─────────────────────────────────────────────────────╯
 
-─────────────────────── Sources ──────────────────────
-  1. p. 42 — Chapter 3: Topic X  (score: 0.92)
-  2. p. 41 — Chapter 3: Introduction  (score: 0.71)
+──────────────────── Also retrieved ──────────────────
+  scan p. 41 · book p. 40 — Chapter 3: Introduction  (score: 0.71)
+
+  3.2s · 1800 in / 310 out · cost $0.0042
 ```
 
 ## Configuration
