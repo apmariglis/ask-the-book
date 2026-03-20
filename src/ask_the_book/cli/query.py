@@ -94,7 +94,7 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print()
         for i, source in enumerate(used, start=1):
             page_label = _page_label(source.page, source.book_page)
-            title_label = f" — {source.title}" if source.title else ""
+            title_label = f" — {source.table_title}" if source.table_title else (f" — {source.title}" if source.title else "")
             score_label = f"  (score: {source.score:.2f})"
 
             excerpt_lines = Text()
@@ -118,7 +118,7 @@ def _render_response(question: str, response: RAGResponse) -> None:
         console.print(Rule("Also retrieved", style="dim"))
         for source in retrieved:
             page_label = _page_label(source.page, source.book_page)
-            title_label = f" — {source.title}" if source.title else ""
+            title_label = f" — {source.table_title}" if source.table_title else (f" — {source.title}" if source.title else "")
             score_label = f"  [dim](score: {source.score:.2f})[/dim]"
             console.print(f"  {page_label}{title_label}{score_label}")
 

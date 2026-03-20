@@ -25,6 +25,7 @@ class Source:
     book_page: int | None
     title: str | None
     score: float
+    table_title: str | None = None
 
 
 @dataclass
@@ -95,6 +96,7 @@ class RAGEngine:
                 book_page=r.book_page,
                 title=r.title,
                 score=r.score,
+                table_title=r.table_title,
             )
             for r in results
         ]

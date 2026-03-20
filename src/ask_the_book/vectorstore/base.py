@@ -24,6 +24,7 @@ class SearchResult:
     book_page: int | None
     title: str | None
     score: float  # Higher is more similar (normalised to [0, 1] where possible)
+    table_title: str | None = None  # Set only for table chunks
 
 
 class VectorStore(ABC):

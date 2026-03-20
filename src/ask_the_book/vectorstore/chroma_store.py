@@ -68,6 +68,7 @@ class ChromaStore(VectorStore):
             # in metadata); convert back to None on the way out.
             book_page = meta["book_page"] or None
             title = meta["title"] or None
+            table_title = meta["table_title"] or None
 
             search_results.append(
                 SearchResult(
@@ -77,6 +78,7 @@ class ChromaStore(VectorStore):
                     book_page=book_page,
                     title=title,
                     score=score,
+                    table_title=table_title,
                 )
             )
 
@@ -92,4 +94,5 @@ def _chunk_metadata(chunk: Chunk) -> dict:
         # Store None as an empty string so we can round-trip cleanly.
         "book_page": chunk.book_page if chunk.book_page is not None else "",
         "title": chunk.title if chunk.title is not None else "",
+        "table_title": chunk.table_title if chunk.table_title is not None else "",
     }

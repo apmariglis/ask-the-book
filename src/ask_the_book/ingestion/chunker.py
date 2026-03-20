@@ -28,6 +28,7 @@ class Chunk:
     page: int
     book_page: int | None
     title: str | None
+    table_title: str | None = None  # Set only for table chunks
 
 
 class Chunker(ABC):
@@ -51,28 +52,29 @@ class WholePageChunker(Chunker):
         chunks: list[Chunk] = []
 
         for page in pages:
-            parts: list[str] = []
-
             if page.text.strip():
-                parts.append(page.text.strip())
-
-            for table in page.tables:
-                table_block = _format_table(table.title, table.caption, table.content)
-                parts.append(table_block)
-
-            if not parts:
-                continue  # Nothing to index on this page
-
-            combined_text = "\n\n".join(parts)
-            chunks.append(
-                Chunk(
-                    chunk_id=f"page-{page.page}",
-                    text=combined_text,
-                    page=page.page,
-                    book_page=page.book_page,
-                    title=page.title,
+                chunks.append(
+                    Chunk(
+                        chunk_id=f"page-{page.page}",
+                        text=page.text.strip(),
+                        page=page.page,
+                        book_page=page.book_page,
+                        title=page.title,
+                        table_title=None,
+                    )
                 )
-            )
+
+            for i, table in enumerate(page.tables):
+                chunks.append(
+                    Chunk(
+                        chunk_id=f"page-{page.page}-table-{i}",
+                        text=_format_table(table.title, table.caption, table.content),
+                        page=page.page,
+                        book_page=page.book_page,
+                        title=page.title,
+                        table_title=table.title or None,
+                    )
+                )
 
         return chunks
 
