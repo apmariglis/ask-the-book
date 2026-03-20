@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from ask_the_book.generation.base import GenerationResult
 from ask_the_book.rag.engine import RAGEngine
 from ask_the_book.rag.engine import RAGResponse
 from ask_the_book.vectorstore.base import SearchResult
@@ -25,13 +26,13 @@ def test_engine_returns_rag_response() -> None:
     retriever.retrieve.return_value = [_make_search_result()]
 
     llm = MagicMock()
-    llm.generate.return_value = "The answer."
+    llm.generate.return_value = GenerationResult(answer="The answer.", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     response = engine.query("What is the answer?")
 
     assert isinstance(response, RAGResponse)
-    assert response.answer == "The answer."
+    assert response.answer == "The answer."  # unwrapped from GenerationResult by engine
     assert len(response.sources) == 1
 
 
@@ -42,7 +43,7 @@ def test_engine_passes_context_chunks_to_llm() -> None:
     retriever.retrieve.return_value = results
 
     llm = MagicMock()
-    llm.generate.return_value = "Answer."
+    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     engine.query("Question?")
@@ -56,7 +57,7 @@ def test_engine_passes_history_to_llm() -> None:
     retriever.retrieve.return_value = []
 
     llm = MagicMock()
-    llm.generate.return_value = "Answer."
+    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
 
     history = [{"role": "user", "content": "Prior question"}]
     engine = RAGEngine(retriever=retriever, llm=llm)
@@ -73,7 +74,7 @@ def test_engine_sources_match_results() -> None:
     retriever.retrieve.return_value = results
 
     llm = MagicMock()
-    llm.generate.return_value = "Answer."
+    llm.generate.return_value = GenerationResult(answer="Answer.", excerpts=[])
 
     engine = RAGEngine(retriever=retriever, llm=llm)
     response = engine.query("Q?")
