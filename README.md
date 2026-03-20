@@ -60,6 +60,8 @@ cp .env.example .env
 
 ### 3. Ingest your book
 
+> **Don't have a JSONL file yet?** Use [docpeel](https://github.com/apmariglis/docpeel) to extract one from a PDF book.
+
 ```bash
 askthebook ingest data/book.jsonl
 ```
