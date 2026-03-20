@@ -21,6 +21,7 @@ from ask_the_book.vectorstore.base import SearchResult
 class Source:
     """Metadata about a single retrieved chunk shown as a citation."""
 
+    chunk_id: str
     page: int
     book_page: int | None
     title: str | None
@@ -92,6 +93,7 @@ class RAGEngine:
 
         sources = [
             Source(
+                chunk_id=r.chunk_id,
                 page=r.page,
                 book_page=r.book_page,
                 title=r.title,
@@ -136,10 +138,12 @@ def _annotate_excerpts(
     for excerpt in excerpts:
         book_page = None
         source_page = None
+        source_chunk_id = None
         for result in results:
             if excerpt.text.strip() in result.text:
                 book_page = result.book_page
                 source_page = result.page
+                source_chunk_id = result.chunk_id
                 break
         annotated.append(
             Excerpt(
@@ -147,6 +151,7 @@ def _annotate_excerpts(
                 supports=excerpt.supports,
                 book_page=book_page,
                 source_page=source_page,
+                source_chunk_id=source_chunk_id,
             )
         )
     return annotated

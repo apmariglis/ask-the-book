@@ -77,14 +77,14 @@ def _render_response(question: str, response: RAGResponse) -> None:
     console.print(Panel(Group(*answer_parts), title="Answer"))
     console.print()
 
-    excerpts_by_page: dict[int | None, list[Excerpt]] = {}
+    excerpts_by_chunk: dict[str | None, list[Excerpt]] = {}
     for excerpt in response.excerpts:
-        excerpts_by_page.setdefault(excerpt.source_page, []).append(excerpt)
+        excerpts_by_chunk.setdefault(excerpt.source_chunk_id, []).append(excerpt)
 
     used: list[Source] = []
     retrieved: list[Source] = []
     for source in response.sources:
-        if excerpts_by_page.get(source.page):
+        if excerpts_by_chunk.get(source.chunk_id):
             used.append(source)
         else:
             retrieved.append(source)
@@ -98,7 +98,7 @@ def _render_response(question: str, response: RAGResponse) -> None:
             score_label = f"  (score: {source.score:.2f})"
 
             excerpt_lines = Text()
-            for j, excerpt in enumerate(excerpts_by_page.get(source.page, [])):
+            for j, excerpt in enumerate(excerpts_by_chunk.get(source.chunk_id, [])):
                 if j > 0:
                     excerpt_lines.append("\n\n")
                 excerpt_lines.append(excerpt.text, style="italic")

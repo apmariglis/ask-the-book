@@ -23,9 +23,10 @@ class Message(TypedDict):
 @dataclass
 class Excerpt:
     text: str
-    supports: str = ""            # which part of the answer this passage backs up
-    book_page: int | None = None  # printed page number, filled in by the engine
-    source_page: int | None = None  # scan page number, used for grouping with sources
+    supports: str = ""                # which part of the answer this passage backs up
+    book_page: int | None = None      # printed page number, filled in by the engine
+    source_page: int | None = None    # scan page number, for display
+    source_chunk_id: str | None = None  # chunk this excerpt came from, for grouping
 
 
 @dataclass
