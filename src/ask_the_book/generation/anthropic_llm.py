@@ -87,7 +87,6 @@ class AnthropicLLM(LLMProvider):
         )
 
         raw = "{" + response.content[0].text  # re-attach the prefill
-        print("DEBUG RAW:", repr(raw))  # add this temporarily
 
         try:
             data = json.loads(raw)
