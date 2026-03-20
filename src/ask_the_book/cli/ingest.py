@@ -10,10 +10,10 @@ from __future__ import annotations
 from pathlib import Path
 
 import click
+from ask_the_book.cli.wiring import build_embedder
+from ask_the_book.cli.wiring import build_store
 from ask_the_book.config import config
-from ask_the_book.embedding.openai_embedder import OpenAIEmbedder
 from ask_the_book.ingestion.pipeline import ingest
-from ask_the_book.vectorstore.chroma_store import ChromaStore
 from rich.console import Console
 from rich.progress import Progress
 from rich.progress import SpinnerColumn
@@ -30,12 +30,8 @@ def ingest_command(jsonl_path: Path) -> None:
 
     JSONL_PATH is the path to your OCR output file.
     """
-    embedder = OpenAIEmbedder(
-        api_key=config.openai_api_key, model=config.embedding_model
-    )
-    store = ChromaStore(
-        path=config.chroma_path, collection_name=config.chroma_collection
-    )
+    embedder = build_embedder()
+    store = build_store()
 
     with Progress(
         SpinnerColumn(),

@@ -8,13 +8,9 @@ Displays the answer followed by source citations.
 from __future__ import annotations
 
 import click
-from ask_the_book.config import config
-from ask_the_book.embedding.openai_embedder import OpenAIEmbedder
-from ask_the_book.generation.anthropic_llm import AnthropicLLM
+from ask_the_book.cli.wiring import build_engine
 from ask_the_book.rag.engine import RAGEngine
 from ask_the_book.rag.engine import RAGResponse
-from ask_the_book.retrieval.retriever import Retriever
-from ask_the_book.vectorstore.chroma_store import ChromaStore
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -36,7 +32,7 @@ def query_command(question: str) -> None:
     QUESTION should be a natural-language question in quotes,
     e.g.:  askthebook query "What does chapter 3 say about topic X?"
     """
-    engine = _build_engine()
+    engine = build_engine()
 
     with Progress(
         SpinnerColumn(),
@@ -50,20 +46,6 @@ def query_command(question: str) -> None:
     _render_response(question, response)
 
 
-def _build_engine() -> RAGEngine:
-    embedder = OpenAIEmbedder(
-        api_key=config.openai_api_key, model=config.embedding_model
-    )
-    store = ChromaStore(
-        path=config.chroma_path, collection_name=config.chroma_collection
-    )
-    retriever = Retriever(embedder=embedder, store=store, top_k=config.retrieval_top_k)
-    llm = AnthropicLLM(
-        api_key=config.anthropic_api_key,
-        model=config.generation_model,
-        max_tokens=config.max_tokens,
-    )
-    return RAGEngine(retriever=retriever, llm=llm)
 
 
 def _render_response(question: str, response: RAGResponse) -> None:
