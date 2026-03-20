@@ -95,12 +95,33 @@ All settings can be overridden with environment variables (or in `.env`):
 
 | Variable | Default | Description |
 |---|---|---|
-| `OPENAI_API_KEY` | — | **Required** |
-| `ANTHROPIC_API_KEY` | — | **Required** |
+| `OPENAI_API_KEY` | — | **Required** — used for embeddings |
+| `ANTHROPIC_API_KEY` | — | **Required** — used for answer generation |
 | `CHROMA_PATH` | `.chroma` | Where ChromaDB stores its data |
 | `EMBEDDING_MODEL` | `text-embedding-3-small` | OpenAI embedding model |
 | `GENERATION_MODEL` | `claude-sonnet-4-5` | Anthropic model |
 | `RETRIEVAL_TOP_K` | `5` | Number of chunks retrieved per query |
+
+## Input data format
+
+The JSONL file must have one JSON object per line. Any extra fields are ignored.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `page` | int | ✅ | PDF/scan page number |
+| `text` | string | | Page body text |
+| `skip` | bool | | If `true`, page is excluded from indexing |
+| `book_page` | int | | Printed page number inside the book |
+| `title` | string | | Page or section title |
+| `tables` | array | | List of tables on the page (see below) |
+
+Each object in `tables`:
+
+| Field | Type | Description |
+|---|---|---|
+| `title` | string | Table title |
+| `caption` | string | Table caption |
+| `content` | string | Table contents as a Markdown string |
 
 ## Running tests
 
