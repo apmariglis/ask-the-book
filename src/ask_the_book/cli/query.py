@@ -115,7 +115,7 @@ def _render_response(question: str, response: RAGResponse) -> None:
                 Panel(
                     excerpt_lines,
                     title=f"[bold]{i}.[/bold] {page_label}{title_label}[dim]{score_label}[/dim]",
-                    border_style="blue",
+                    border_style="yellow",
                 )
             )
 
