@@ -35,8 +35,8 @@ def test_whole_page_chunker_skips_empty_pages() -> None:
 
 
 def test_whole_page_chunker_preserves_metadata() -> None:
-    page = make_page(page=7, book_page=5, title="Wisdom")
+    page = make_page(page=7, book_page=5, title="Chapter 3")
     chunks = WholePageChunker().chunk([page])
     assert chunks[0].page == 7
     assert chunks[0].book_page == 5
-    assert chunks[0].title == "Wisdom"
+    assert chunks[0].title == "Chapter 3"
